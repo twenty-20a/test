@@ -471,20 +471,20 @@
         // Фильтрация товаров
         function getFilteredProducts() {
             let filtered = products;
-
+            
             // Фильтр по категории
             if (currentCategory !== 'all') {
                 filtered = filtered.filter(p => p.category === currentCategory);
             }
-
+            
             // Фильтр по поиску
             if (searchQuery) {
-                filtered = filtered.filter(p =>
+                filtered = filtered.filter(p => 
                     p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     p.description.toLowerCase().includes(searchQuery.toLowerCase())
                 );
             }
-
+            
             return filtered;
         }
 
@@ -492,7 +492,7 @@
         function renderProducts() {
             const grid = document.getElementById('productsGrid');
             const filtered = getFilteredProducts();
-
+            
             if (filtered.length === 0) {
                 grid.innerHTML = `
                     <div class="empty-state" style="grid-column: 1 / -1;">
@@ -503,12 +503,12 @@
                 `;
                 return;
             }
-
+            
             grid.innerHTML = filtered.map((product, index) => {
                 const inCart = cart[product.id] || 0;
                 const outOfStock = product.stock === 0;
                 const badgeClass = product.badge === 'NEW' ? 'new' : product.badge?.includes('%') ? 'sale' : '';
-
+                
                 return `
                     <div class="product-card ${outOfStock ? 'out-of-stock' : ''}" style="animation-delay: ${index * 0.1}s">
                         ${product.badge ? `<div class="badge ${badgeClass}">${product.badge}</div>` : ''}
@@ -545,11 +545,11 @@
         function addToCart(productId) {
             const product = products.find(p => p.id === productId);
             if (!product || product.stock === 0) return;
-
+            
             cart[productId] = 1;
             updateCart();
             renderProducts();
-
+            
             // Анимация
             if (tg) {
                 tg.HapticFeedback.impactOccurred('light');
@@ -560,19 +560,19 @@
         function changeQuantity(productId, delta) {
             const product = products.find(p => p.id === productId);
             if (!product) return;
-
+            
             const currentQty = cart[productId] || 0;
             const newQty = currentQty + delta;
-
+            
             if (newQty <= 0) {
                 delete cart[productId];
             } else if (newQty <= product.stock) {
                 cart[productId] = newQty;
             }
-
+            
             updateCart();
             renderProducts();
-
+            
             if (tg) {
                 tg.HapticFeedback.impactOccurred('light');
             }
@@ -612,7 +612,7 @@
                 btn.classList.add('active');
                 currentCategory = btn.dataset.category;
                 renderProducts();
-
+                
                 if (tg) {
                     tg.HapticFeedback.impactOccurred('light');
                 }
@@ -661,7 +661,7 @@
                 try {
                     // Отправляем данные боту
                     tg.sendData(JSON.stringify(orderData));
-
+                    
                     // Показываем уведомление
                     tg.showAlert('Заказ отправлен! Спасибо за покупку!', () => {
                         tg.close();
